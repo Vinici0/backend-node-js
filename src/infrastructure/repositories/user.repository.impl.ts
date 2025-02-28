@@ -10,6 +10,8 @@ export class UserRepositoryImpl implements UserRepository {
   constructor(private readonly datasource: UserDatasource) {}
 
   create(createUserDto: CreateUserDto): Promise<UserEntity> {
+    console.log(createUserDto);
+    
     return this.datasource.create(createUserDto);
   }
 

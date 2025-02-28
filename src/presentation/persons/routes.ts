@@ -11,11 +11,11 @@ export class PersonRoutes {
     const repository = new PersonRepositoryImpl(datasource);
     const controller = new PersonController(repository);
 
-    router.get("/", controller.getPersons);
-    router.get("/:id", controller.getPersonById);
-    router.post("/", controller.createPerson);
-    router.put("/:id", controller.updatePerson);
-    router.delete("/:id", controller.deletePerson);
+    router.get("/", controller.getPersons.bind(controller));
+    router.get("/:id", controller.getPersonById.bind(controller));
+    router.post("/", controller.createPerson.bind(controller));
+    router.put("/:id", controller.updatePerson.bind(controller));
+    router.delete("/:id", controller.deletePerson.bind(controller));
     return router;
   }
 }

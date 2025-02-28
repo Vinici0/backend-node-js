@@ -1,6 +1,6 @@
 export class CreateUserDto {
   // Esta propiedad debe asignarse con una función asíncrona que reciba un email y retorne un booleano.
-  static existsByEmail: (email: string) => Promise<boolean>;
+  // static existsByEmail: (email: string) => Promise<boolean>;
 
   private constructor(
     public readonly username: string,
@@ -82,16 +82,6 @@ export class CreateUserDto {
       baseEmail = firstInitial + lastNames[0].toLowerCase();
     }
     let emailCandidate = baseEmail + "@mail.com";
-    let counter = 0;
-
-    if (!this.existsByEmail)
-      throw new Error("The existsByEmail function must be set in CreateUserDto.");
-
-    // Verificar duplicidad de email y ajustar en caso de duplicado.
-    while (await this.existsByEmail(emailCandidate)) {
-      counter++;
-      emailCandidate = baseEmail + counter + "@mail.com";
-    }
 
     return [
       undefined,

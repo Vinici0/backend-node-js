@@ -1,3 +1,4 @@
+import { User } from "@prisma/client";
 import { prisma } from "../../data/postgres";
 import {
   CreateUserDto,
@@ -8,15 +9,71 @@ import {
 
 export class UserDatasourceImpl implements UserDatasource {
   async create(createUserDto: CreateUserDto): Promise<UserEntity> {
-    const user = await prisma.user.create({
-      data: { ...createUserDto },
-    });
-    return UserEntity.fromObject(user);
+    const { 
+      username, 
+      password, 
+      email, 
+      sessionActive, 
+      status, 
+      personId,
+      identification,
+      firstName,
+      lastName
+    } = createUserDto;
+    
+    if (personId) {
+      const user = await prisma.user.create({
+        data: { 
+          username,
+          password,
+          email,
+          sessionActive,
+          status,
+          personId
+        },
+      });
+      
+      return UserEntity.fromObject(user);
+    }
+    
+    else if (firstName && lastName && identification) {
+      const user = await prisma.user.create({
+        data: { 
+          username,
+          password,
+          email,
+          sessionActive,
+          status,
+          person: {
+            create: {
+              firstName,
+              lastName,
+              identification,
+              birthDate: new Date() 
+            }
+          }
+        },
+        include: {
+          person: true
+        }
+      });
+      
+      return UserEntity.fromObject(user);
+    }
+    
+    // If we don't have enough data for either approach
+    else {
+      throw new Error("Either personId or person details (firstName, lastName, identification) must be provided");
+    }
   }
 
   async getAll(): Promise<UserEntity[]> {
     const users = await prisma.user.findMany();
-    return users.map((user: UserEntity) => UserEntity.fromObject(user));
+    return users.map((user: User) => UserEntity.fromObject({
+      ...user,
+      status: user.status || undefined,
+      personId: user.personId || undefined
+    }));
   }
 
   async findById(id: number): Promise<UserEntity> {
