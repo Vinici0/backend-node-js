@@ -1,5 +1,4 @@
-import { CreatePersonDto } from "../dtos/persons/create-person.dto";
-import { UpdatePersonDto } from "../dtos/persons/update-person.sto";
+import { CreatePersonDto, UpdatePersonDto } from "../dtos";
 import { PersonEntity } from "../entities/person.entity";
 
 export abstract class PersonDatasource {
