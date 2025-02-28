@@ -12,11 +12,11 @@ export class RoleRoutes {
     const repository = new RoleRepositoryImpl(datasource);
     const controller = new RoleController(repository);
 
-    router.get("/", controller.getRoles);
-    router.get("/:id", controller.getRoleById);
-    router.post("/", controller.createRole);
-    router.put("/:id", controller.updateRole);
-    router.delete("/:id", controller.deleteRole);
+    router.get("/", controller.getRoles.bind(controller));
+    router.get("/:id", controller.getRoleById.bind(controller));
+    router.post("/", controller.createRole.bind(controller));
+    router.put("/:id", controller.updateRole.bind(controller));
+    router.delete("/:id", controller.deleteRole.bind(controller));
 
     return router;
   }

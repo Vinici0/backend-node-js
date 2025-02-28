@@ -12,11 +12,11 @@ export class SessionRoutes {
     const repository = new SessionRepositoryImpl(datasource);
     const controller = new SessionController(repository);
 
-    router.get('/', controller.getSessions);
-    router.get('/:id', controller.getSessionById);
-    router.post('/', controller.createSession);
-    router.put('/:id', controller.updateSession);
-    router.delete('/:id', controller.deleteSession);
+    router.get('/', controller.getSessions.bind(controller));
+    router.get('/:id', controller.getSessionById.bind(controller));
+    router.post('/', controller.createSession.bind(controller));
+    router.put('/:id', controller.updateSession.bind(controller));
+    router.delete('/:id', controller.deleteSession.bind(controller));
 
     return router;
   }
