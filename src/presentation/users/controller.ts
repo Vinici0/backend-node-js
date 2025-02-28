@@ -6,11 +6,15 @@ import {
   GetUser,
   GetUsers,
   UpdateUser,
+  UserQueryRepository,
 } from "../../domain";
 import { UserRepository } from "../../domain/repositories/user.repository";
 
 export class UserController {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly userQueryRepository: UserQueryRepository
+  ) {}
 
   public async getUsers(req: Request, res: Response) {
     try {
@@ -45,7 +49,7 @@ export class UserController {
         return;
       }
       
-      const user = await new CreateUser(this.userRepository).execute(
+      const user = await new CreateUser(this.userRepository, this.userQueryRepository).execute(
         createUserDto!
       );
       res.json(user);

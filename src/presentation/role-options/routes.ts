@@ -12,11 +12,11 @@ export class RoleOptionRoutes {
     const repository = new RoleOptionRepositoryImpl(datasource);
     const controller = new RoleOptionController(repository);
 
-    router.get('/', controller.getRoleOptions);
-    router.get('/:id', controller.getRoleOptionById);
-    router.post('/', controller.createRoleOption);
-    router.put('/:id', controller.updateRoleOption);
-    router.delete('/:id', controller.deleteRoleOption);
+    router.get('/', controller.getRoleOptions.bind(controller))
+    router.get('/:id', controller.getRoleOptionById.bind(controller))
+    router.post('/', controller.createRoleOption.bind(controller))
+    router.put('/:id', controller.updateRoleOption.bind(controller))
+    router.delete('/:id', controller.deleteRoleOption.bind(controller))
 
     return router;
   }
