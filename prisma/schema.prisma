@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Person {
+  id             Int      @id @default(autoincrement())
+  firstName      String   @db.VarChar(60)
+  lastName       String   @db.VarChar(60)
+  identification String   @db.VarChar(10)
+  birthDate      DateTime @db.Date
+
+  // One-to-many relationship with User
+  users User[]
+}
+
+model User {
+  id            Int     @id @default(autoincrement())
+  username      String  @db.VarChar(50)
+  password      String  @db.VarChar(50)
+  email         String  @db.VarChar(120)
+  sessionActive String  @db.Char(1)
+  status        String? @db.Char(20)
+
+  // FK to Person
+  personId Int?
+  person   Person? @relation(fields: [personId], references: [id])
+
+  // One-to-many relationship with Session
+  sessions Session[]
+
+  // Many-to-many relationship with Role through pivot table role_users
+  roles role_users[]
+}
+
+model Session {
+  id        Int      @id @default(autoincrement())
+  startDate DateTime @db.Date
+  endDate   DateTime @db.Date
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+}
+
+model Role {
+  id       Int    @id @default(autoincrement())
+  roleName String @db.VarChar(50)
+
+  // Many-to-many relationship with User (through role_users)
+  users role_users[]
+
+  // Many-to-many relationship with RoleOption (through role_roleOptions)
+  options role_roleOptions[]
+}
+
+model RoleOption {
+  id         Int    @id @default(autoincrement())
+  optionName String @db.VarChar(50)
+
+  // Many-to-many relationship with Role (through role_roleOptions)
+  roles role_roleOptions[]
+}
+
+model role_users {
+  roleId Int
+  userId Int
+
+  role Role @relation(fields: [roleId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@id([roleId, userId])
+}
+
+model role_roleOptions {
+  roleId       Int
+  roleOptionId Int
+
+  role       Role       @relation(fields: [roleId], references: [id])
+  roleOption RoleOption @relation(fields: [roleOptionId], references: [id])
+
+  @@id([roleId, roleOptionId])
+}

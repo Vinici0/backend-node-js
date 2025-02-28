@@ -36,6 +36,7 @@ build/
 *.swp
 *.swo
 *.swn
+*.sql
 
 # Docker
 docker-compose.override.yml
