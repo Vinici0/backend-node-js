@@ -1,5 +1,5 @@
 import { CreateRoleUserDto, UpdateRoleUserDto } from "../dtos";
-import { RoleUserEntity } from "../entities/role_user.entity";
+import { RoleUserEntity } from "../entities/role-user.entity";
 
 export abstract class RoleUserRepository {
   abstract create(
