@@ -44,6 +44,7 @@ export class UserController {
         res.status(400).json({ error });
         return;
       }
+      
       const user = await new CreateUser(this.userRepository).execute(
         createUserDto!
       );

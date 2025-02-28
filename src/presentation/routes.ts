@@ -14,7 +14,7 @@ export class AppRoutes {
   static get routes(): Router {
     const router = Router();
 
-    router.use("/api/login", LoginRoutes.routes);
+    router.use("/api/auth", LoginRoutes.routes);
     router.use("/api/persons", PersonRoutes.routes);
     router.use("/api/users", UserRoutes.routes);
     router.use("/api/sessions", SessionRoutes.routes);
