@@ -12,50 +12,83 @@ import { UserRepository } from "../../domain/repositories/user.repository";
 export class UserController {
   constructor(private readonly userRepository: UserRepository) {}
 
-  public getUsers = (req: Request, res: Response) => {
-    new GetUsers(this.userRepository)
-      .execute()
-      .then((users) => res.json(users))
-      .catch((error) => res.status(400).json({ error }));
-  };
-
-  public getUserById = (req: Request, res: Response) => {
-    const id = +req.params.id;
-    new GetUser(this.userRepository)
-      .execute(id)
-      .then((user) => res.json(user))
-      .catch((error) => res.status(400).json({ error }));
-  };
-
-  public createUser = async (req: Request, res: Response) => {
-    const [error, createUserDto] = await CreateUserDto.create(req.body);
-    if (error) return res.status(400).json({ error });
-
+  public async getUsers(req: Request, res: Response) {
     try {
+      const users = await new GetUsers(this.userRepository).execute();
+      res.json(users);
+    } catch (error) {
+      res.status(400).json({
+        error:
+          error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  }
+
+  public async getUserById(req: Request, res: Response) {
+    try {
+      const id = +req.params.id;
+      const user = await new GetUser(this.userRepository).execute(id);
+      res.json(user);
+    } catch (error) {
+      res.status(400).json({
+        error:
+          error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  }
+
+  public async createUser(req: Request, res: Response) {
+    try {
+      const [error, createUserDto] = await CreateUserDto.create(req.body);
+      if (error) {
+        res.status(400).json({ error });
+        return;
+      }
       const user = await new CreateUser(this.userRepository).execute(
         createUserDto!
       );
-      return res.json(user);
-    } catch (error: any) {
-      return res.status(400).json({ error: error.message });
+      res.json(user);
+    } catch (error) {
+      res.status(400).json({
+        error:
+          error instanceof Error ? error.message : "Unknown error",
+      });
     }
-  };
+  }
 
-  public updateUser = (req: Request, res: Response) => {
-    const id = +req.params.id;
-    const [error, updateUserDto] = UpdateUserDto.create({ ...req.body, id });
-    if (error) return res.status(400).json({ error });
-    new UpdateUser(this.userRepository)
-      .execute(updateUserDto!)
-      .then((user) => res.json(user))
-      .catch((error) => res.status(400).json({ error }));
-  };
+  public async updateUser(req: Request, res: Response) {
+    try {
+      const id = +req.params.id;
+      const [error, updateUserDto] = UpdateUserDto.create({
+        ...req.body,
+        id,
+      });
+      if (error) {
+        res.status(400).json({ error });
+        return;
+      }
+      const user = await new UpdateUser(this.userRepository).execute(
+        updateUserDto!
+      );
+      res.json(user);
+    } catch (error) {
+      res.status(400).json({
+        error:
+          error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  }
 
-  public deleteUser = (req: Request, res: Response) => {
-    const id = +req.params.id;
-    new DeleteUser(this.userRepository)
-      .execute(id)
-      .then((user) => res.json(user))
-      .catch((error) => res.status(400).json({ error }));
-  };
+  public async deleteUser(req: Request, res: Response) {
+    try {
+      const id = +req.params.id;
+      const user = await new DeleteUser(this.userRepository).execute(id);
+      res.json(user);
+    } catch (error) {
+      res.status(400).json({
+        error:
+          error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  }
 }

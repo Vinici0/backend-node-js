@@ -7,55 +7,70 @@ import {
   GetPersons,
   UpdatePerson,
 } from "../../domain";
-
 import { PersonRepository } from "../../domain/repositories/person.repository";
-import { PersonEntity } from "../../domain";
 
 export class PersonController {
   constructor(private readonly personRepository: PersonRepository) {}
 
-  public getPersons = (req: Request, res: Response) => {
-    new GetPersons(this.personRepository)
-      .execute()
-      .then((persons: PersonEntity[]) => res.json(persons))
-      .catch((error: any) => res.status(400).json({ error }));
-  };
+  public async getPersons(req: Request, res: Response) {
+    try {
+      const persons = await new GetPersons(this.personRepository).execute();
+      res.json(persons);
+    } catch (error) {
+      res.status(400).json({ error: error instanceof Error ? error.message : 'Unknown error' });
+    }
+  }
 
-  public getPersonById = (req: Request, res: Response) => {
-    const id = +req.params.id;
-    new GetPerson(this.personRepository)
-      .execute(id)
-      .then((person: PersonEntity) => res.json(person))
-      .catch((error: any) => res.status(400).json({ error }));
-  };
+  public async getPersonById(req: Request, res: Response) {
+    try {
+      const id = +req.params.id;
+      const person = await new GetPerson(this.personRepository).execute(id);
+      res.json(person);
+    } catch (error) {
+      res.status(400).json({ error: error instanceof Error ? error.message : 'Unknown error' });
+    }
+  }
 
-  public createPerson = (req: Request, res: Response) => {
-    const [error, createPersonDto] = CreatePersonDto.create(req.body);
-    if (error) return res.status(400).json({ error });
-    new CreatePerson(this.personRepository)
-      .execute(createPersonDto!)
-      .then((person: PersonEntity) => res.json(person))
-      .catch((error: any) => res.status(400).json({ error }));
-  };
+  public async createPerson(req: Request, res: Response) {
+    try {
+      const [error, createPersonDto] = CreatePersonDto.create(req.body);
+      if (error) {
+        res.status(400).json({ error });
+        return;
+      }
 
-  public updatePerson = (req: Request, res: Response) => {
-    const id = +req.params.id;
-    const [error, updatePersonDto] = UpdatePersonDto.create({
-      ...req.body,
-      id,
-    });
-    if (error) return res.status(400).json({ error });
-    new UpdatePerson(this.personRepository)
-      .execute(updatePersonDto!)
-      .then((person: PersonEntity) => res.json(person))
-      .catch((error: any) => res.status(400).json({ error }));
-  };
+      const person = await new CreatePerson(this.personRepository)
+        .execute(createPersonDto!);
+      res.json(person);
+    } catch (error) {
+      res.status(400).json({ error: error instanceof Error ? error.message : 'Unknown error' });
+    }
+  }
 
-  public deletePerson = (req: Request, res: Response) => {
-    const id = +req.params.id;
-    new DeletePerson(this.personRepository)
-      .execute(id)
-      .then((person: PersonEntity) => res.json(person))
-      .catch((error: any) => res.status(400).json({ error }));
-  };
+  public async updatePerson(req: Request, res: Response) {
+    try {
+      const id = +req.params.id;
+      const [error, updatePersonDto] = UpdatePersonDto.create({ ...req.body, id });
+      if (error) {
+        res.status(400).json({ error });
+        return;
+      }
+
+      const person = await new UpdatePerson(this.personRepository)
+        .execute(updatePersonDto!);
+      res.json(person);
+    } catch (error) {
+      res.status(400).json({ error: error instanceof Error ? error.message : 'Unknown error' });
+    }
+  }
+
+  public async deletePerson(req: Request, res: Response) {
+    try {
+      const id = +req.params.id;
+      const person = await new DeletePerson(this.personRepository).execute(id);
+      res.json(person);
+    } catch (error) {
+      res.status(400).json({ error: error instanceof Error ? error.message : 'Unknown error' });
+    }
+  }
 }
