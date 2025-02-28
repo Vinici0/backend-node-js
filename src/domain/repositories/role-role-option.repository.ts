@@ -1,5 +1,5 @@
 import { CreateRoleRoleOptionDto, UpdateRoleRoleOptionDto } from "../dtos";
-import { RoleRoleOptionEntity } from "../entities/role_roleOption.entity";
+import { RoleRoleOptionEntity } from "../entities/role-role-option.entity";
 
 export abstract class RoleRoleOptionRepository {
   abstract create(
