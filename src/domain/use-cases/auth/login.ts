@@ -6,7 +6,7 @@ import { JwtAdapter } from "../../../config/jwt.adapter";
 
 export interface LoginResponse {
   token: string;
-  user: UserEntity;
+  user: any;
 }
 
 export interface LoginUserUseCase {
@@ -29,6 +29,9 @@ export class LoginUser implements LoginUserUseCase {
     if (!token) {
       throw new Error("Token generation failed");
     }
-    return { token, user };
+    
+    const { password, ...userWithoutPassword } = user;
+
+    return { token, user: userWithoutPassword };
   }
 }
